@@ -18,6 +18,14 @@ export const canopen = (open) => {
     };
 }
 
+export const interacts = (onMoveSpace, onInteract) => {
+    return {
+        cname: "interacts",
+        onMoveSpace,
+        onInteract
+    }
+}
+
 export const verthoriz = (vh) => {
     return {
         cname:"verthoriz",

@@ -1,6 +1,6 @@
 import * as Components from './Components';
 import * as Door from './systems/Door';
-import { add } from '../utilities/vector';
+import * as Widget from './systems/Widget';
 
 export const player = (x, y, cm) => {
     return cm.createEntity("player")
@@ -24,10 +24,9 @@ export const widget = (x, y, cm) => {
     return cm.createEntity(`widget/${x}/${y}`)
         .add(Components.sprite("W", x, y, "transparent", "lightgreen"))
         .add(Components.pos(x,y))
-        .add(Components.blocksmove(
-            (e, r, a) => {
-                return {result:"wall", destination:undefined, entity:e}
-            }
+        .add(Components.interacts(
+            Widget.blocksmove,
+            Widget.interacts
         ));
 }
 
@@ -40,10 +39,11 @@ export const door = (x, y, vh, open, cm) => {
         .add(Components.pos(x, y))
         .add(Components.canopen(open))
         .add(Components.persistvision(false))
-        .add(Components.blocksmove(
-            (e, req, answer) => {
-                return {result:"interact", destination: {x,y}, entity:e, interact:Door.interact}
-            }));
+        .add(Components.interacts(
+            Door.blocksmove,
+            Door.interacts
+        ));
+
 
     if(!open) result.add(Components.blockslos());
 

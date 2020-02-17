@@ -34,10 +34,6 @@ class DrawComponent extends PureComponent {
     render() {
         const {x, y, glyph, bcolor, fcolor, border, z} = this.props;
 
-        // if(!show) {
-        //     return <div style={{display:"none"}}></div>;
-        // }
-
         let divStyle = {
             position:"absolute", 
             top:(y*tileSize)+"px", 
@@ -50,10 +46,8 @@ class DrawComponent extends PureComponent {
             fontWeight:"bold",
             border: border ? "1px solid " + border : "",
             zIndex: z
-            //WebkitAnimationDuration: spin,
         };
-
-        //const spinName = spin ? " spin" : "";
+        
         let clsName = "sprite";
         return <div className={clsName} style={divStyle}>
             <div style={{paddingTop:"3px"}}>{glyph}</div>

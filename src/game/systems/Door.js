@@ -5,10 +5,13 @@ export const glyph = (key, gm) => () => {
     if(door.canopen.open) return "\\";
     if(door.verthoriz.vh === "v") return "|";
     return "-";
-    //return '\u23AF';
 }
 
-export const interact = (mover, to, door, gm) => {
+export const blocksmove = (e, req, answer) => {
+    return {result:"interact", destination: req.to, entity:e}
+};
+
+export const interacts = (mover, to, door, gm) => {
     if(door.canopen.open) {
         Move.doMove(mover, to, gm);
         return;
@@ -18,6 +21,6 @@ export const interact = (mover, to, door, gm) => {
     door.remove("blockslos");
 
     gm.addLogMessage("You open the door.");
-    gm.needLOS = true;
+    gm.requestFullLOSUpdate();
     gm.turnDone();
 }

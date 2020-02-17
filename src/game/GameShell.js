@@ -17,16 +17,20 @@ export const states = {
 class GameShell extends BaseGameManager {
     constructor() {
         super();
-        this.needLOS = true;
+        this.needLOSUpdate = true;
         this.drawList = [];
         this.cm.createIndex("ix_pos", "pos", pos => mapIndexKey(pos.vec));
         this.loop = this.turnLoop.bind(this);
     }
 
     lineOfSight() {
-        if(this.needLOS || this.drawList.length === 0) this.drawList = doLos(this);
-        this.needLOS = false;
+        if(this.needLOSUpdate || this.drawList.length === 0) this.drawList = doLos(this);
+        this.needLOSUpdate = false;
         return this.drawList;
+    }
+
+    requestFullLOSUpdate() {
+        this.needLOSUpdate = true;
     }
 
     player() {

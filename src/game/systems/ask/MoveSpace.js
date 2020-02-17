@@ -1,6 +1,6 @@
 import {ask} from './Ask';
 
-export const checkMoveSpace = ["blocksmove", "pickup"];
+export const checkMoveSpace = ["blocksmove", "interacts"];
 export const checkMover = [];
 export const askMoveSpace = ask(checkMoveSpace, comp => comp.onMoveSpace);
 export const askMover = ask(checkMover, comp => comp.onMover);
@@ -14,7 +14,7 @@ export const askMover = ask(checkMover, comp => comp.onMover);
 //         : {result:"blocked", entity, destination:undefined};
 // }
 
-export const pickup = (entity, req, answer, gm) => {
-    if(answer.move === false) return answer;
-    return {result:"pickup", destination:req.moveTo, entity};
-}
+// export const pickup = (entity, req, answer, gm) => {
+//     if(answer.move === false) return answer;
+//     return {result:"pickup", destination:req.moveTo, entity};
+// }
