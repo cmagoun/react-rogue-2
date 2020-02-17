@@ -265,7 +265,7 @@ class ComponentManager {
         this.queuedRemovals.forEach(rem => this.__removeComponentFrom(rem.eid, rem.cname));
         this.queuedDestroys.forEach(des => this.__destroyEntity(des));
 
-        this.queuedUpdates.forEach(upd => console.log(`Update: {eid: ${upd.eid}, cname:${upd.cname}, data:${JSON.stringify(upd.data)}}`));
+        //this.queuedUpdates.forEach(upd => console.log(`Update: {eid: ${upd.eid}, cname:${upd.cname}, data:${JSON.stringify(upd.data)}}`));
 
         this.queuedAdds = [];
         this.queuedUpdates = [];

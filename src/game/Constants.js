@@ -2,8 +2,8 @@ import * as Vector from '../utilities/vector';
 import _ from 'lodash';
 
 export const tileSize = 20;
-export const arenaHeight = 35;
-export const arenaWidth = 70;
+export const arenaHeight = 50;
+export const arenaWidth = 80;
 export const defaultSlideTime = 150;
 
 

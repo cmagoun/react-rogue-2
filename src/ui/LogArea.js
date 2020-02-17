@@ -4,7 +4,7 @@ import withContext from '../ecs/withContext';
 class LogArea extends Component {
     render() {
         return <div>
-            {this.props.log.map(msg => <div>{msg}</div>)}
+            {this.props.log.map(logitem => <div key={logitem.id}>{logitem.msg}</div>)}
         </div>
     }
 }

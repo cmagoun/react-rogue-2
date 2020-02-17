@@ -8,16 +8,22 @@ class BaseGameManager {
         this.gameState = 0; //bogus value
         this.animationCallbacks = new Map();
         this.logLength = 10;
-        this.log = []; //array of strings that goes into the log;
+        this.logNonce = 0;
+        this.log = []; //array of id:strings that goes into the log;
 
         this.stateCallbacks = new Map();
         this.updateCallbacks = new Map();
     }
 
     addLogMessage(message) {
-        const newLength = this.log.unshift(message);
+        const newLength = this.log.unshift({id:this.logNonce, msg:message});
         if(newLength > this.logLength) this.log.pop();
+        this.logNonce++;
         this.update();
+    }
+
+    readLog() {
+        return this.log;
     }
 
     registerForStateChanges(id, callback) {

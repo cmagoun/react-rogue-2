@@ -30,7 +30,7 @@ export const doLos = (gm) => {
 
     shadowcast(player.pos.vec.x, player.pos.vec.y, transparent, reveal);
     const result =  Array.from(drawList.values());
-    console.log("LOS calculated: " + persisted.length + "/" + result.length);
+    //console.log("LOS calculated: " + persisted.length + "/" + result.length);
     return result;
 }
 
