@@ -3,11 +3,10 @@ import { mapIndexKey } from '../Constants';
 
 export const doLos = (gm) => {
     const player = gm.player();
-    const persisted = gm.cm
-        .entitiesWith(["persistvision", "sprite", "los"])
-        .filter(x => x.persistvision.seen);
+    const entities = gm.cm
+        .entitiesWith(["persistvision", "sprite"]);
 
-
+    const persisted = entities.filter(x => x.persistvision.seen === true);
 
     const drawList = new Map();
     persisted.forEach(p => drawList.set(p.id, p));
@@ -31,11 +30,12 @@ export const doLos = (gm) => {
 
     shadowcast(player.pos.vec.x, player.pos.vec.y, transparent, reveal);
     const result =  Array.from(drawList.values());
-    console.log(persisted.length + "/" + result.length);
+    console.log("LOS calculated: " + persisted.length + "/" + result.length);
     return result;
 }
 
 /**
+ * Taken from: https://gist.github.com/as-f/59bb06ced7e740e11ec7dda9d82717f6
  * Recursive shadowcasting algorithm.
  * This algorithm creates a field of view centered around (x, y).
  * Opaque tiles are treated as if they have beveled edges.

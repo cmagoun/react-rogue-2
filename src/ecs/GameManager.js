@@ -55,9 +55,9 @@ class BaseGameManager {
         return this.cm.createEntity(id);
     }
 
-    isDirty() {
-        return this.cm.isDirty();
-    }
+    // isDirty() {
+    //     return this.cm.isDirty();
+    // }
 
     updateGameState(newState, payload) {
         this.gameState = newState;

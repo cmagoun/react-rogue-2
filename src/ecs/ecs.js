@@ -5,14 +5,18 @@ class ComponentManager {
         this.ctoe = new Map();
         this.indexesByComp = new Map();
         this.indexesByName = new Map();
-        this.dirty = false;
+        //this.dirty = false;
+        this.queuedAdds = [];
+        this.queuedUpdates = [];
+        this.queuedRemovals = [];
+        this.queuedDestroys = [];
     }
 
-    isDirty() {
-        const result = this.dirty;
-        this.dirty = false;
-        return result;
-    }
+    // isDirty() {
+    //     const result = this.dirty;
+    //     this.dirty = false;
+    //     return result;
+    // }
 
     exists(id) {
        return this.etoc.get(id) !== undefined;
@@ -37,12 +41,16 @@ class ComponentManager {
 
         this.etoc.set(newId, new Map());
         this.emap.set(newId, {id:newId});
-        this.dirty = true;
+        //this.dirty = true;
 
         return new Builder(newId, this);
     }
 
     destroyEntity(id) {
+        this.queuedDestroys.push(id);
+    }
+
+    __destroyEntity(id) {
         if(!this.checkEntity(id)) return;
 
         const compList = Array.from(this.etoc.get(id).keys());
@@ -55,10 +63,10 @@ class ComponentManager {
 
         this.etoc.delete(id);
         this.emap.delete(id);
-        this.dirty = true;
+        //this.dirty = true;
     }
 
-    addComponentTo(eid, cname, data) {
+    __addComponentTo(eid, cname, data) {
         //does entity exist
         if(!this.checkEntity(eid)) return;
 
@@ -76,15 +84,23 @@ class ComponentManager {
             index.set(data, eid);
         }
 
-        this.dirty = true;
+        //this.dirty = true;
     }
 
     addComponent(eid, data) {
+        this.queuedAdds.push({eid, data});
+    }
+
+    __addComponent(eid, data) {
         let {cname, ...obj} = data;
-        this.addComponentTo(eid, cname, obj);
+        this.__addComponentTo(eid, cname, obj);
     }
 
     removeComponentFrom(eid, cname) {
+        this.queuedRemovals.push({eid, cname});
+    }
+
+    __removeComponentFrom(eid, cname) {
         if(!this.checkEntity(eid)) return;
 
         this.ctoe.get(cname).delete(eid);
@@ -99,7 +115,7 @@ class ComponentManager {
 
         this.emap.get(eid)[cname] = undefined;
 
-        this.dirty = true;
+        //this.dirty = true;
     }
 
     checkOnRemove(eid, cname) {
@@ -110,6 +126,10 @@ class ComponentManager {
     }
 
     editComponentOf(eid, cname, data) {
+        this.queuedUpdates.push({eid, cname, data});
+    }
+
+    __editComponentOf(eid, cname, data) {
         if(!this.checkEntity(eid)) return;
 
         const eobj = this.emap.get(eid);
@@ -128,7 +148,7 @@ class ComponentManager {
             index.set(eobj[cname], eid);
         }
      
-        this.dirty = true;
+        //this.dirty = true;
     }
 
     createComponent(name) {
@@ -233,6 +253,27 @@ class ComponentManager {
         const existing = this.entitiesWith(cname);
         existing.forEach(e => ci.set(e[cname], e.id));
     }
+
+    performQueuedChanges() {
+        if(this.queuedAdds.length === 0 &&
+           this.queuedDestroys.length === 0 &&
+           this.queuedRemovals.length === 0 &&
+           this.queuedUpdates.length === 0) return false;
+
+        this.queuedAdds.forEach(add => this.__addComponentTo(add.eid, add.cname, add.data));
+        this.queuedUpdates.forEach(update => this.__editComponentOf(update.eid, update.cname, update.data));
+        this.queuedRemovals.forEach(rem => this.__removeComponentFrom(rem.eid, rem.cname));
+        this.queuedDestroys.forEach(des => this.__destroyEntity(des));
+
+        this.queuedUpdates.forEach(upd => console.log(`Update: {eid: ${upd.eid}, cname:${upd.cname}, data:${JSON.stringify(upd.data)}}`));
+
+        this.queuedAdds = [];
+        this.queuedUpdates = [];
+        this.queuedRemovals = [];
+        this.queuedDestroys = [];
+
+        return true;
+    }
 }
 
 //just a wrapper for the entity id and the cm functions
@@ -244,12 +285,12 @@ class Builder {
     }
 
     add(component) {
-        this.cm.addComponent(this.id, component);
+        this.cm.__addComponent(this.id, component);
         return this;
     }
 
     remove(cname) {
-        this.cm.removeComponentFrom(this.id, cname);
+        this.cm.__removeComponentFrom(this.id, cname);
         return this;
     }
 

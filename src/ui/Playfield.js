@@ -22,7 +22,7 @@ class Playfield extends Component {
     }
 
     render() {
-        const toDraw = doLos(this.props.gm);
+        const toDraw = this.props.gm.lineOfSight();
         const log = this.props.gm.log;
 
         return <div>

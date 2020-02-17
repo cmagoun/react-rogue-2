@@ -31,5 +31,7 @@ export const request = (id, moveTo, gm) => {
 export const doMove = (mover, to, gm) => {
     Animate.slide(mover, mover.sprite.draw, to, defaultSlideTime);
     mover.edit("pos", {vec: {x:to.x, y:to.y}});
+    //mover.edit("sprite", {draw: {x:to.x, y:to.y}});
+    if(mover.id) gm.needLOS = true;
     gm.turnDone(); 
 }
