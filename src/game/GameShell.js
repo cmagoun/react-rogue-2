@@ -1,9 +1,10 @@
 import {BaseGameManager} from "../ecs/GameManager";
-import * as Entities from './entities/Entities';
+import * as Entities from './Entities';
 import * as Keyboard from '../utilities/keyboard';
 import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
 import { mapIndexKey } from "./Constants";
+import { doLos } from "./systems/Shadowcast";
 
 export const states = {
     INTRO: 0,
@@ -16,9 +17,16 @@ export const states = {
 class GameShell extends BaseGameManager {
     constructor() {
         super();
-
+        this.needLOS = true;
+        this.drawList = [];
         this.cm.createIndex("ix_pos", "pos", pos => mapIndexKey(pos.vec));
         this.loop = this.turnLoop.bind(this);
+    }
+
+    lineOfSight() {
+        if(this.needLOS || this.drawList.length === 0) this.drawList = doLos(this);
+        this.needLOS = false;
+        return this.drawList;
     }
 
     player() {
@@ -47,7 +55,8 @@ class GameShell extends BaseGameManager {
     }
 
     turnLoop() {
-        if(this.isDirty()) this.update();
+        if(this.cm.performQueuedChanges()) this.update();
+       
 
         switch(this.gameState) {
             case states.INTRO:
@@ -65,6 +74,10 @@ class GameShell extends BaseGameManager {
         }
 
         requestAnimationFrame(this.loop);
+    }
+
+    toBlockLos() {
+        return this.cm.entitiesWith(["blockslos", "pos"]);
     }
 
     toDraw() {
@@ -96,6 +109,8 @@ class GameShell extends BaseGameManager {
         Entities.wall(15, 12, this);
         Entities.door(15, 13, "v", false, this);
         Entities.wall(15, 14, this);
+
+        Entities.widget(17, 13, this);
     }
 }
 

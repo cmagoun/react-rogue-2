@@ -1,3 +1,9 @@
+export const blockslos = () => {
+    return {
+        cname:"blockslos"
+    }
+}
+
 export const blocksmove = (onMoveSpace) => {
     return {
         cname: "blocksmove",
@@ -19,6 +25,13 @@ export const verthoriz = (vh) => {
     }
 }
 
+export const persistvision = (seen) => {
+    return {
+        cname:"persistvision",
+        seen
+    }
+}
+
 export const pos = (x, y) => {
     return {
         cname:"pos",
@@ -26,7 +39,7 @@ export const pos = (x, y) => {
     };
 }
 
-export const sprite = (glyph, x, y, bcolor, fcolor, z, border, show) => {
+export const sprite = (glyph, x, y, bcolor, fcolor, z, border) => {
     return {
         cname: "sprite",
         glyph,
@@ -35,6 +48,6 @@ export const sprite = (glyph, x, y, bcolor, fcolor, z, border, show) => {
         fcolor: fcolor || "white", 
         border: border || "",
         z: z || 0,
-        show: show === undefined ? true : show,
+        //show: show === undefined ? true : show,
     };
 }

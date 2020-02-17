@@ -7,9 +7,23 @@ class BaseGameManager {
         this.screens = new Map();
         this.gameState = 0; //bogus value
         this.animationCallbacks = new Map();
+        this.logLength = 10;
+        this.logNonce = 0;
+        this.log = []; //array of id:strings that goes into the log;
 
         this.stateCallbacks = new Map();
         this.updateCallbacks = new Map();
+    }
+
+    addLogMessage(message) {
+        const newLength = this.log.unshift({id:this.logNonce, msg:message});
+        if(newLength > this.logLength) this.log.pop();
+        this.logNonce++;
+        this.update();
+    }
+
+    readLog() {
+        return this.log;
     }
 
     registerForStateChanges(id, callback) {
@@ -47,9 +61,9 @@ class BaseGameManager {
         return this.cm.createEntity(id);
     }
 
-    isDirty() {
-        return this.cm.isDirty();
-    }
+    // isDirty() {
+    //     return this.cm.isDirty();
+    // }
 
     updateGameState(newState, payload) {
         this.gameState = newState;

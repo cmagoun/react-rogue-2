@@ -1,29 +1,11 @@
 import React, { Component } from 'react';
 import withContext from '../ecs/withContext';
 import DrawArea from './DrawArea';
-
+import LogArea from './LogArea';
 import {arenaWidth, tileSize} from '../game/Constants';
-
+import {doLos} from '../game/systems/Shadowcast';
 
 const styles = {
-    main: {
-        display: 'flex',
-        flexDirection: 'row'
-    },
-
-    topbar: {
-        display: 'flex',
-        flexDirection:'row',
-        justifyContent: 'space-between',
-        height: "30px"
-    },
-
-    left: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: `${arenaWidth * tileSize}px`
-    },
-
     whitespace: {
         height: "10px",
         width: "10px"
@@ -40,10 +22,12 @@ class Playfield extends Component {
     }
 
     render() {
-        const toDraw = this.props.gm.toDraw();
+        const toDraw = this.props.gm.lineOfSight();
+        const log = this.props.gm.log;
 
-        return <div style={styles.main}>
+        return <div>
             <DrawArea toDraw={toDraw} showAlt={this.props.gm.showAlt}/>
+            <LogArea log={log}/>
         </div>
     }
 
