@@ -7,9 +7,17 @@ class BaseGameManager {
         this.screens = new Map();
         this.gameState = 0; //bogus value
         this.animationCallbacks = new Map();
+        this.logLength = 10;
+        this.log = []; //array of strings that goes into the log;
 
         this.stateCallbacks = new Map();
         this.updateCallbacks = new Map();
+    }
+
+    addLogMessage(message) {
+        const newLength = this.log.unshift(message);
+        if(newLength > this.logLength) this.log.pop();
+        this.update();
     }
 
     registerForStateChanges(id, callback) {

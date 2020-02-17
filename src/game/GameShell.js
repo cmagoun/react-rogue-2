@@ -1,5 +1,5 @@
 import {BaseGameManager} from "../ecs/GameManager";
-import * as Entities from './entities/Entities';
+import * as Entities from './Entities';
 import * as Keyboard from '../utilities/keyboard';
 import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
@@ -16,7 +16,6 @@ export const states = {
 class GameShell extends BaseGameManager {
     constructor() {
         super();
-
         this.cm.createIndex("ix_pos", "pos", pos => mapIndexKey(pos.vec));
         this.loop = this.turnLoop.bind(this);
     }
@@ -65,6 +64,10 @@ class GameShell extends BaseGameManager {
         }
 
         requestAnimationFrame(this.loop);
+    }
+
+    toBlockLos() {
+        return this.cm.entitiesWith(["blockslos", "pos"]);
     }
 
     toDraw() {

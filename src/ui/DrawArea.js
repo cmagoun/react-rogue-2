@@ -32,11 +32,11 @@ class DrawArea extends Component{
 
 class DrawComponent extends PureComponent {
     render() {
-        const {x, y, glyph, bcolor, fcolor, show, border, z} = this.props;
+        const {x, y, glyph, bcolor, fcolor, border, z} = this.props;
 
-        if(!show) {
-            return <div style={{display:"none"}}></div>;
-        }
+        // if(!show) {
+        //     return <div style={{display:"none"}}></div>;
+        // }
 
         let divStyle = {
             position:"absolute", 
