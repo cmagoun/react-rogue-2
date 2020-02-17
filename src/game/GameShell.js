@@ -109,6 +109,8 @@ class GameShell extends BaseGameManager {
         Entities.wall(15, 12, this);
         Entities.door(15, 13, "v", false, this);
         Entities.wall(15, 14, this);
+
+        Entities.widget(17, 13, this);
     }
 }
 

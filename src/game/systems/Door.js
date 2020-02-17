@@ -16,7 +16,9 @@ export const interact = (mover, to, door, gm) => {
 
     door.edit("canopen", {open:true});
     door.remove("blockslos");
-    
+
+
     gm.addLogMessage("You open the door.");
+    gm.needLOS = true;
     gm.turnDone();
 }
