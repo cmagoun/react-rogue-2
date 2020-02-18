@@ -42,6 +42,7 @@ class GameShell extends BaseGameManager {
         this.needLOSUpdate = true;
     }
 
+
     player() {
         return this.cm.entity("player");
     }

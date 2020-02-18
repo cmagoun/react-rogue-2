@@ -42,7 +42,7 @@ class SingleEntityTargeter extends Component {
         const hits = this.possibleTargets.filter(e => onSpace(e, {x,y}));
 
         if(hits.length > 0) {
-            this.props.gm.fireReadyInteraction({...this.props, targets:hits});
+            this.props.gm.fireReadyInteraction({...this.props.info, targets:hits});
         }
     }
 }

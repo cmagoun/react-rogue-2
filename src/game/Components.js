@@ -45,18 +45,10 @@ export const pos = (x, y, gm) => {
     return {
         cname:"pos",
         vec: {x,y},
-        onEdit: losUpdate(gm)
+        onEdit: (eid) => {if(eid === "player") gm.requestFullLOSUpdate();},
+        onRemove: () => gm.requestFullLOSUpdate()
     };
 }
-
-const losUpdate = (gm) => (eid, data, cm) => {
-    if(eid === "player") {
-        gm.requestFullLOSUpdate();
-    } else {
-        //gm.requestPartialLOSUpdate();
-    }
-}
-
 
 export const sprite = (glyph, x, y, bcolor, fcolor, z, border) => {
     return {
