@@ -78,7 +78,8 @@ class ComponentManager {
     }
 
     addComponent(eid, data) {
-        this.queuedAdds.push({eid, data});
+        let {cname, ...obj} = data;
+        this.queuedAdds.push({eid, cname, data:obj});
     }
 
     __addComponent(eid, data) {

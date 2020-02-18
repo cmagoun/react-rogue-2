@@ -1,5 +1,5 @@
 
-import { mapIndexKey } from '../Constants';
+import { mapIndexKey, maxLos } from '../Constants';
 
 export const doLos = (gm) => {
     const player = gm.player();
@@ -56,7 +56,7 @@ const shadowcast = function(cx, cy, transparent, reveal) {
      * @param transform - describes the transfrom to apply on x and y; determines the octant
      */
     var scan = function(y, start, end, transform) {
-        if (start >= end || y > 10) {    
+        if (start >= end || y > maxLos) {    
             return;
         }
         var xmin = Math.round((y - 0.5) * start);

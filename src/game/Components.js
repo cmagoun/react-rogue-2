@@ -8,7 +8,11 @@ export const blockslos = (gm) => {
 export const blocksmove = (onMoveSpace) => {
     return {
         cname: "blocksmove",
-        onMoveSpace
+        onMoveSpace: onMoveSpace 
+            ? onMoveSpace 
+            : (e, req, ans) => {
+                return {result:"wall", destination:undefined, entity:e}
+            }
     };
 }
 

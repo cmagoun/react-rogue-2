@@ -164,6 +164,8 @@ class GameShell extends BaseGameManager {
         Entities.wall(15, 14, this);
 
         Entities.widget(17, 13, this);
+        Entities.widget(3,3,this);
+        Entities.widget(11, 14, this);
         Entities.nukeWidget(8, 13, this);
     }
 }

@@ -16,10 +16,7 @@ export const wall = (x, y, gm) => {
         .add(Components.pos(x, y, gm))
         .add(Components.blockslos(gm))
         .add(Components.persistvision(false))
-        .add(Components.blocksmove(
-            (e, req, answer) => {
-                return {result:"wall", destination:undefined, entity:e}
-            }));
+        .add(Components.blocksmove());
 }
 
 export const widget = (x, y, gm) => {
