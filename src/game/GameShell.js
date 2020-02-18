@@ -5,11 +5,14 @@ import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
 import { mapIndexKey } from "./Constants";
 import { doLos } from "./systems/Shadowcast";
+import * as Animate from './systems/Animate';
 
 export const states = {
     INTRO: 0,
     INIT: 1,
-    TEST:2,
+    PLAYFIELD: 2,
+    TURN_START:3,
+    TURN_OVER:4,
     WAITING_FOR_INPUT: 99,
     ANIMATIONTEST: 100,
 };
@@ -19,8 +22,14 @@ class GameShell extends BaseGameManager {
         super();
         this.needLOSUpdate = true;
         this.drawList = [];
+        this.turn = 0;
+        this.readyInteraction = {};
         this.cm.createIndex("ix_pos", "pos", pos => mapIndexKey(pos.vec));
         this.loop = this.turnLoop.bind(this);
+    }
+
+    continueTurn() {
+        this.updateGameState(states.WAITING_FOR_INPUT);
     }
 
     lineOfSight() {
@@ -48,15 +57,45 @@ class GameShell extends BaseGameManager {
         }
     }
 
+    cancelInteraction() {
+        this.readyInteraction = {};
+        this.updateGameState(states.WAITING_FOR_INPUT);
+    }
+
+    fireReadyInteraction(props) {
+        const end = this.readyInteraction.endsTurn;
+
+        this.readyInteraction.fire(props, this);
+        this.readyInteraction = {};
+        if(end) {
+            this.turnDone();
+        } else {
+            this.continueTurn();
+        }
+    }
+
+    setReadyInteraction(interaction) {
+        this.readyInteraction = interaction;
+    }
+
     start() {
         this.gameState = states.INTRO;
         requestAnimationFrame(this.loop);
     }
 
+    taggedAs(tag) {
+        return this.cm
+            .entitiesWith("tag")
+            .filter(e => e.tag.value === tag);
+    }
+
+
     turnDone() {
         //player moves over and over
-        this.updateGameState(states.WAITING_FOR_INPUT);
+        this.updateGameState(states.TURN_OVER);
     }
+
+
 
     turnLoop() {
         if(this.cm.performQueuedChanges()) this.update();
@@ -65,20 +104,29 @@ class GameShell extends BaseGameManager {
         switch(this.gameState) {
             case states.INTRO:
             case states.ANIMATIONTEST:
+            case states.WAITING_FOR_INPUT:
                 break;
 
             case states.INIT:
+                this.turn = 0;
                 this.setupScene();
-                this.updateGameState(states.TEST);
+                this.updateGameState(states.PLAYFIELD);
+                this.updateGameState(states.TURN_START);
                 break;
 
-            case states.TEST:
+            case states.TURN_START:
                 this.updateGameState(states.WAITING_FOR_INPUT)
+                break;
+
+            case states.TURN_OVER:
+                this.turn++;
+                this.updateGameState(states.WAITING_FOR_INPUT);
                 break;
         }
 
         requestAnimationFrame(this.loop);
     }
+
 
     toBlockLos() {
         return this.cm.entitiesWith(["blockslos", "pos"]);
@@ -115,6 +163,7 @@ class GameShell extends BaseGameManager {
         Entities.wall(15, 14, this);
 
         Entities.widget(17, 13, this);
+        Entities.nukeWidget(8, 13, this);
     }
 }
 

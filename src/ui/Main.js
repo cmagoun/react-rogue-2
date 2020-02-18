@@ -41,8 +41,18 @@ class Main extends Component {
                 this.setState({components:[<AnimationTest/>]});
                 break;
 
-            case states.TEST:
+            case states.PLAYFIELD:
                 this.setState({components:[<Playfield/>]});
+                break;
+
+            case states.INTERACTING:
+                this.setState({components:[<Playfield/>, payload]});
+                break;
+
+            default:
+                if(this.state.components.length > 1) {
+                    this.setState({components:[<Playfield/>]});
+                }
                 break;
         }
     

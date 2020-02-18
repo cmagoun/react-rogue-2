@@ -3,20 +3,15 @@ class ComponentManager {
         this.emap = new Map();
         this.etoc = new Map();
         this.ctoe = new Map();
+
         this.indexesByComp = new Map();
         this.indexesByName = new Map();
-        //this.dirty = false;
+
         this.queuedAdds = [];
         this.queuedUpdates = [];
         this.queuedRemovals = [];
         this.queuedDestroys = [];
     }
-
-    // isDirty() {
-    //     const result = this.dirty;
-    //     this.dirty = false;
-    //     return result;
-    // }
 
     exists(id) {
        return this.etoc.get(id) !== undefined;
@@ -33,7 +28,6 @@ class ComponentManager {
         this.etoc.clear();
         this.ctoe.clear();
         this.emap.clear();
-        this.dirty = true;
     }
 
     createEntity(id) {
@@ -41,7 +35,6 @@ class ComponentManager {
 
         this.etoc.set(newId, new Map());
         this.emap.set(newId, {id:newId});
-        //this.dirty = true;
 
         return new Builder(newId, this);
     }
@@ -58,12 +51,11 @@ class ComponentManager {
         let i = compList.length;
         while(i--) {
             this.ctoe.get(compList[i]).delete(id);
-            this.checkOnRemove(id, compList[i]);
+            this.__checkOnRemove(id, compList[i]);
         }
 
         this.etoc.delete(id);
         this.emap.delete(id);
-        //this.dirty = true;
     }
 
     __addComponentTo(eid, cname, data) {
@@ -83,8 +75,6 @@ class ComponentManager {
         if(index !== undefined) {
             index.set(data, eid);
         }
-
-        //this.dirty = true;
     }
 
     addComponent(eid, data) {
@@ -106,7 +96,7 @@ class ComponentManager {
         this.ctoe.get(cname).delete(eid);
         this.etoc.get(eid).delete(cname);
 
-        this.checkOnRemove(eid, cname);
+        this.__checkOnRemove(eid, cname);
      
         const index = this.indexesByComp.get(cname);
         if(index !== undefined) {
@@ -114,11 +104,9 @@ class ComponentManager {
         }
 
         this.emap.get(eid)[cname] = undefined;
-
-        //this.dirty = true;
     }
 
-    checkOnRemove(eid, cname) {
+    __checkOnRemove(eid, cname) {
         const comp = this.emap.get(eid)[cname];
         if(comp.onRemove) {
             comp.onRemove(eid, this);
@@ -144,11 +132,18 @@ class ComponentManager {
             ? Object.assign({}, data)
             : Object.assign({}, existing, data);
 
+        this.__checkOnEdit(eid, cname, data);
+
         if(index !== undefined) {
             index.set(eobj[cname], eid);
         }
-     
-        //this.dirty = true;
+    }
+
+    __checkOnEdit(eid, cname, data) {
+        const comp = this.emap.get(eid)[cname];
+        if(comp.onEdit) {
+            comp.onEdit(eid, data, this);
+        }
     }
 
     createComponent(name) {
@@ -255,6 +250,7 @@ class ComponentManager {
     }
 
     performQueuedChanges() {
+        //returns boolean that represents if any updates were performed
         if(this.queuedAdds.length === 0 &&
            this.queuedDestroys.length === 0 &&
            this.queuedRemovals.length === 0 &&

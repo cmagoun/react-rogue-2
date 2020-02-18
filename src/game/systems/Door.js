@@ -3,24 +3,20 @@ import * as Move from './Move';
 export const glyph = (key, gm) => () => {
     const door = gm.entity(key);
     if(door.canopen.open) return "\\";
-    if(door.verthoriz.vh === "v") return "|";
+    if(door.orientation.value === "v") return "|";
     return "-";
 }
 
-export const blocksmove = (e, req, answer) => {
-    return {result:"interact", destination: req.to, entity:e}
-};
+export const interaction = {
+    fire: (props, gm) => {
+        if(props.entity.canopen.open) {
+            Move.doMove(props.actor, props.pos, gm);
+            return;
+        }
 
-export const interacts = (mover, to, door, gm) => {
-    if(door.canopen.open) {
-        Move.doMove(mover, to, gm);
-        return;
-    }
-
-    door.edit("canopen", {open:true});
-    door.remove("blockslos");
-
-    gm.addLogMessage("You open the door.");
-    gm.requestFullLOSUpdate();
-    gm.turnDone();
+        props.entity.edit("canopen", {open:true});
+        props.entity.remove("blockslos");
+        gm.addLogMessage("You open the door.");
+    },
+    endsTurn: true
 }

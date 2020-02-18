@@ -14,3 +14,8 @@ export function colorToRGBA(color) {
     ctx.fillRect(0, 0, 1, 1);
     return ctx.getImageData(0, 0, 1, 1).data;
 }
+
+export function colorToRGBString(color) {
+    const ac = colorToRGBA(color);
+    return `rgb(${ac[0]},${ac[1]},${ac[2]})`;
+}

@@ -1,6 +1,7 @@
-export const blockslos = () => {
+export const blockslos = (gm) => {
     return {
-        cname:"blockslos"
+        cname:"blockslos",
+        onRemove: () => gm.requestFullLOSUpdate()
     }
 }
 
@@ -18,18 +19,18 @@ export const canopen = (open) => {
     };
 }
 
-export const interacts = (onMoveSpace, onInteract) => {
+export const interacts = (onMoveSpace, interaction) => {
     return {
         cname: "interacts",
         onMoveSpace,
-        onInteract
+        interaction
     }
 }
 
-export const verthoriz = (vh) => {
+export const orientation = (value) => {
     return {
-        cname:"verthoriz",
-        vh
+        cname:"orientation",
+        value
     }
 }
 
@@ -40,12 +41,22 @@ export const persistvision = (seen) => {
     }
 }
 
-export const pos = (x, y) => {
+export const pos = (x, y, gm) => {
     return {
         cname:"pos",
-        vec: {x,y}
+        vec: {x,y},
+        onEdit: losUpdate(gm)
     };
 }
+
+const losUpdate = (gm) => (eid, data, cm) => {
+    if(eid === "player") {
+        gm.requestFullLOSUpdate();
+    } else {
+        //gm.requestPartialLOSUpdate();
+    }
+}
+
 
 export const sprite = (glyph, x, y, bcolor, fcolor, z, border) => {
     return {
@@ -58,4 +69,11 @@ export const sprite = (glyph, x, y, bcolor, fcolor, z, border) => {
         z: z || 0,
         //show: show === undefined ? true : show,
     };
+}
+
+export const tag = (tag) => {
+    return {
+        cname: "tag",
+        value: tag
+    }
 }

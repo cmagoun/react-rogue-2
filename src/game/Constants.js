@@ -5,6 +5,7 @@ export const tileSize = 20;
 export const arenaHeight = 50;
 export const arenaWidth = 80;
 export const defaultSlideTime = 150;
+export const arenaY = 0;
 
 
 export const mapIndexKey = (vec) => `${vec.x},${vec.y}`; 
