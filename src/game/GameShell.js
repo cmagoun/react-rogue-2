@@ -6,6 +6,8 @@ import * as Move from './systems/Move';
 import { mapIndexKey } from "./Constants";
 import { doLos } from "./systems/Shadowcast";
 import * as Animate from './systems/Animate';
+import {testMap} from './mapgen/TestMap';
+import * as MapReader from './mapgen/MapReader';
 
 export const states = {
     INTRO: 0,
@@ -13,8 +15,10 @@ export const states = {
     PLAYFIELD: 2,
     TURN_START:3,
     TURN_OVER:4,
+    INTERACTION_UI: 98,
     WAITING_FOR_INPUT: 99,
-    ANIMATIONTEST: 100,
+    ANIMATIONTEST: 1000,
+    MAPTEST: 1001
 };
 
 class GameShell extends BaseGameManager {
@@ -104,6 +108,7 @@ class GameShell extends BaseGameManager {
 
         switch(this.gameState) {
             case states.INTRO:
+            case states.INTERACTION_UI:
             case states.ANIMATIONTEST:
             case states.WAITING_FOR_INPUT:
                 break;
@@ -123,6 +128,14 @@ class GameShell extends BaseGameManager {
                 this.turn++;
                 this.updateGameState(states.WAITING_FOR_INPUT);
                 break;
+
+            case states.MAPTEST:
+                Entities.player(0, 0, this);
+                MapReader.createMap(testMap, this);
+                this.updateGameState(states.PLAYFIELD);
+                this.updateGameState(states.TURN_START);
+                break;
+
         }
 
         requestAnimationFrame(this.loop);

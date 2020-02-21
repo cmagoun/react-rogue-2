@@ -56,3 +56,9 @@ export const doMove = (mover, to, gm) => {
 
     gm.turnDone(); 
 }
+
+export const playerStartSpace = (x, y, gm) => {
+    const player = gm.player();
+    player.edit("pos", {vec:{x,y}});
+    player.edit("sprite", {draw:{x,y}});
+}

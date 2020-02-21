@@ -45,7 +45,7 @@ class Main extends Component {
                 this.setState({components:[<Playfield/>]});
                 break;
 
-            case states.INTERACTING:
+            case states.INTERACTION_UI:
                 this.setState({components:[<Playfield/>, payload]});
                 break;
 

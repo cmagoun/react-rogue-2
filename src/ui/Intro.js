@@ -48,6 +48,10 @@ class Intro extends Component {
                     <button style={styles.button} onClick={this.animation.bind(this)}>Animation Test</button>
                 </div>
 
+                <div style={styles.whitespace}/>
+                <div>
+                    <button style={styles.button} onClick={this.maptest.bind(this)}>Map Test</button>
+                </div>
             </div>
 
         </div>
@@ -59,6 +63,10 @@ class Intro extends Component {
 
     animation() {
         this.props.gm.updateGameState(states.ANIMATIONTEST);
+    }
+
+    maptest() {
+        this.props.gm.updateGameState(states.MAPTEST);
     }
 }
 
