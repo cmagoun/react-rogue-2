@@ -87,6 +87,42 @@ export const isCardinalDirection = (v1) => (v2) => {
     return false;
 }
 
+export const direction = (name) => {
+    switch(name.toLowerCase()) {
+        case "n":
+        case "north":
+            return {x:0, y:-1};
+        
+        case "s":
+        case "south":
+            return {x:0, y:1};
+
+        case "e":
+        case "east":
+            return {x:1, y:0};
+
+        case "w":
+        case "west":
+            return {x:-1, y:0};
+
+        case "ne":
+        case "northeast":
+            return {x:1, y:-1};
+        
+        case "nw":
+        case "northwest":
+            return {x:-1, y:-1};
+
+        case "se":
+        case "southeast":
+            return {x:1, y:1};
+    
+        case "sw":
+        case "southwest":
+            return {x:-1, y:1};
+    }
+}
+
 
 export const adjacent = (vec) => {
     return within(vec, 1)

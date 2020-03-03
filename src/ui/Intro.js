@@ -52,6 +52,11 @@ class Intro extends Component {
                 <div>
                     <button style={styles.button} onClick={this.maptest.bind(this)}>Map Test</button>
                 </div>
+
+                <div style={styles.whitespace}/>
+                <div>
+                    <button style={styles.button} onClick={this.digtest.bind(this)}>Digger Test</button>
+                </div>
             </div>
 
         </div>
@@ -67,6 +72,10 @@ class Intro extends Component {
 
     maptest() {
         this.props.gm.updateGameState(states.MAPTEST);
+    }
+
+    digtest() {
+        this.props.gm.updateGameState(states.DIGTEST);
     }
 }
 

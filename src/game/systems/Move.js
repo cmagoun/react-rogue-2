@@ -11,7 +11,7 @@ const askMover = ask(checkMover, comp => comp.onMover);
 export const request = (id, moveTo, gm) => {
     const mover = gm.entity(id);
 
-    const onSpace = gm.cm.entitiesIn("ix_pos", mapIndexKey(moveTo));
+    const onSpace = gm.entitiesIn("ix_pos", mapIndexKey(moveTo));
     if(onSpace.length === 0) doMove(mover, moveTo, gm);
 
     const request = {onSpace, mover, moveTo};

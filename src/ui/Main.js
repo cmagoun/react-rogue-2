@@ -4,6 +4,7 @@ import Intro from './Intro';
 import { states } from '../game/GameShell';
 import Playfield from './Playfield';
 import AnimationTest from './tests/AnimationTest';
+import DiggerTest from './tests/DiggerTest';
 
 class Main extends Component {
     constructor(props) {
@@ -39,6 +40,10 @@ class Main extends Component {
 
             case states.ANIMATIONTEST:
                 this.setState({components:[<AnimationTest/>]});
+                break;
+
+            case states.DIGTEST:
+                this.setState({components:[<DiggerTest/>]});
                 break;
 
             case states.PLAYFIELD:

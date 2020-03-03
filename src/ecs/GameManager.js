@@ -53,6 +53,10 @@ class BaseGameManager {
         return this.cm.allEntities();
     }
 
+    entitiesIn(index, key, cnames) {
+        return this.cm.entitiesIn(index, key, cnames);
+    }
+
     entitiesWith(cnames) {
         return this.cm.entitiesWith(cnames);
     }

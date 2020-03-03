@@ -5,9 +5,8 @@ import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
 import { mapIndexKey } from "./Constants";
 import { doLos } from "./systems/Shadowcast";
-import * as Animate from './systems/Animate';
 import {testMap} from './mapgen/TestMap';
-import * as MapReader from './mapgen/MapReader';
+import * as MapCreator from './mapgen/MapCreator';
 
 export const states = {
     INTRO: 0,
@@ -18,7 +17,8 @@ export const states = {
     INTERACTION_UI: 98,
     WAITING_FOR_INPUT: 99,
     ANIMATIONTEST: 1000,
-    MAPTEST: 1001
+    MAPTEST: 1001,
+    DIGTEST: 1002,
 };
 
 class GameShell extends BaseGameManager {
@@ -35,6 +35,8 @@ class GameShell extends BaseGameManager {
     continueTurn() {
         this.updateGameState(states.WAITING_FOR_INPUT);
     }
+
+
 
     lineOfSight() {
         if(this.needLOSUpdate || this.drawList.length === 0) this.drawList = doLos(this);
@@ -110,6 +112,7 @@ class GameShell extends BaseGameManager {
             case states.INTRO:
             case states.INTERACTION_UI:
             case states.ANIMATIONTEST:
+            case states.DIGTEST:
             case states.WAITING_FOR_INPUT:
                 break;
 
@@ -131,7 +134,7 @@ class GameShell extends BaseGameManager {
 
             case states.MAPTEST:
                 Entities.player(0, 0, this);
-                MapReader.createMap(testMap, this);
+                MapCreator.readMap(testMap, this);
                 this.updateGameState(states.PLAYFIELD);
                 this.updateGameState(states.TURN_START);
                 break;
