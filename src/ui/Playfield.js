@@ -27,7 +27,11 @@ class Playfield extends Component {
         const log = this.props.gm.log;
 
         return <div>
-            <DrawArea toDraw={toDraw} showAlt={this.props.gm.showAlt}/>
+            <DrawArea 
+                toDraw={toDraw} 
+                showAlt={this.props.gm.showAlt}
+                cameraOrigin={this.props.gm.cameraOrigin}
+            />
             <LogArea log={log}/>
         </div>
     }

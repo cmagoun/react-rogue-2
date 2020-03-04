@@ -11,13 +11,15 @@ const styles = {
 
 class DrawArea extends Component{
     render() {
+        const {x, y} = this.props.cameraOrigin;
+
         return <div className="drawarea" style={styles.drawarea}>
             {this.props.toDraw.map(e => <DrawComponent 
                 key={e.id} 
                 glyph={getGlyph(e.sprite.glyph)}
                 //spriteName={getSpriteName(e, e.sprite.name, this.props.showAlt)} 
-                x={e.sprite.draw.x} 
-                y={e.sprite.draw.y}
+                x={e.sprite.draw.x - x} 
+                y={e.sprite.draw.y - y}
                 fcolor={e.sprite.fcolor}
                 bcolor={e.sprite.bcolor}
                 border={e.sprite.border}

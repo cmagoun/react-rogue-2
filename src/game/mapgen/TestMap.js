@@ -1,6 +1,7 @@
-
 import * as Move from '../systems/Move';
 import * as Door from '../itemdefs/Door';
+import * as Player from '../itemdefs/Player';
+
 
 export const testMap = {
     width: 80,
@@ -16,7 +17,7 @@ export const testMap = {
         },
         {
             key: "@",
-            create: (x, y, gm) => Move.playerStartSpace(x, y, gm),
+            create: (x, y, gm) => Player.placeAt(x, y, gm),
         },
         {
             key: "."

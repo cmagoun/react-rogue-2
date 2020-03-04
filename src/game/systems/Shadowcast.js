@@ -3,6 +3,8 @@ import { mapIndexKey, maxLos } from '../Constants';
 
 export const doLos = (gm) => {
     const player = gm.player();
+    if(!player) return new Map();
+
     const entities = gm.cm
         .entitiesWith(["persistvision", "sprite"]);
 

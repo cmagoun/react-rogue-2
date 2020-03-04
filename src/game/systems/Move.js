@@ -41,8 +41,15 @@ export const request = (id, moveTo, gm) => {
 }
 
 export const doMove = (mover, to, gm) => {
-    Animate.slide(mover, mover.sprite.draw, to, defaultSlideTime);
-    mover.edit("pos", {vec: {x:to.x, y:to.y}});
+    if(mover.id === "player") {
+        mover.edit("pos", {vec: {x:to.x, y:to.y}});
+        mover.edit("sprite", {draw: {x:to.x, y:to.y}});
+        gm.centerOnPoint(to.x, to.y);
+    } else {
+        Animate.slide(mover, mover.sprite.draw, to, defaultSlideTime);
+        mover.edit("pos", {vec: {x:to.x, y:to.y}});
+    }
+
 
     //leaving this here -- now the functionality is in the pos component
     //but I wonder if this is mistake
@@ -55,10 +62,4 @@ export const doMove = (mover, to, gm) => {
     // }
 
     gm.turnDone(); 
-}
-
-export const playerStartSpace = (x, y, gm) => {
-    const player = gm.player();
-    player.edit("pos", {vec:{x,y}});
-    player.edit("sprite", {draw:{x,y}});
 }

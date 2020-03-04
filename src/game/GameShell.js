@@ -2,7 +2,7 @@ import {BaseGameManager} from "../ecs/GameManager";
 import * as Keyboard from '../utilities/keyboard';
 import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
-import { mapIndexKey } from "./Constants";
+import { mapIndexKey, arenaWidth, arenaHeight } from "./Constants";
 import { doLos } from "./systems/Shadowcast";
 import {testMap} from './mapgen/TestMap';
 import * as MapCreator from './mapgen/MapCreator';
@@ -30,11 +30,35 @@ class GameShell extends BaseGameManager {
     constructor() {
         super();
         this.needLOSUpdate = true;
+        this.needUpdate = false;
         this.drawList = [];
         this.turn = 0;
         this.readyInteraction = {};
         this.cm.createIndex("ix_pos", "pos", pos => mapIndexKey(pos.vec));
         this.loop = this.turnLoop.bind(this);
+
+        this.cameraOrigin = {x:0, y:0};
+
+        this.config = {
+            drawWidth: arenaWidth,
+            drawHeight: arenaHeight
+        }
+    }
+
+    centerOnPoint(x, y) {
+        this.cameraOrigin = {
+            x: x - this.config.drawWidth/2,
+            y: y - this.config.drawHeight/2
+        };
+        this.needUpdate = true;
+    }
+
+    centerOnEntity(id) {
+        const entity = this.entity(id);
+        this.centerOnPoint(
+            entity.pos.vec.x,
+            entity.pos.vec.y
+        );
     }
 
     continueTurn() {
@@ -110,8 +134,8 @@ class GameShell extends BaseGameManager {
 
 
     turnLoop() {
-        if(this.cm.performQueuedChanges()) this.update();
-       
+        // if(this.cm.performQueuedChanges() || this.needUpdate) this.update();
+        // this.needUpdate = false;
 
         switch(this.gameState) {
             case states.INTRO:
@@ -138,15 +162,20 @@ class GameShell extends BaseGameManager {
                 break;
 
             case states.MAPTEST:
-                Player.create(-99, -99, this);
                 MapCreator.initMap(80, 40, this);
-
                 MapCreator.readMap(testMap, new Map(), this);
+                
                 this.updateGameState(states.PLAYFIELD);
                 this.updateGameState(states.TURN_START);
                 break;
 
         }
+
+        if(this.cm.performQueuedChanges() || this.needUpdate) {
+            this.update();
+        }
+
+        this.needUpdate = false;
 
         requestAnimationFrame(this.loop);
     }
@@ -162,6 +191,7 @@ class GameShell extends BaseGameManager {
 
     setupScene() {
         Player.create(10, 10, this);
+        this.centerOnPoint(10, 10);
 
         Wall.create(15, 10, this);
         Wall.create(16, 10, this);

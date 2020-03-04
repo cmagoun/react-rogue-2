@@ -73,7 +73,11 @@ class ComponentManager {
 
         const index = this.indexesByComp.get(cname);
         if(index !== undefined) {
-            index.set(data, eid);
+            if(eid === null) {
+                let x = 100;
+            }
+
+             index.set(data, eid);
         }
     }
 

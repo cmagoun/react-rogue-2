@@ -36,9 +36,12 @@ class SingleEntityTargeter extends Component {
 
     handleMouseUp(evt) {
         if(!this.props.events) return;
+        const co = this.props.gm.cameraOrigin;
         
-        const x = Math.floor((evt.clientX)/tileSize);
-        const y = Math.floor((evt.clientY-arenaY)/tileSize);
+        const x = Math.floor((evt.clientX)/tileSize) + co.x;
+        const y = Math.floor((evt.clientY-arenaY)/tileSize) + co.y;
+
+
         const hits = this.possibleTargets.filter(e => onSpace(e, {x,y}));
 
         if(hits.length > 0) {
