@@ -1,5 +1,4 @@
 import {BaseGameManager} from "../ecs/GameManager";
-import * as Entities from './Entities';
 import * as Keyboard from '../utilities/keyboard';
 import * as Vector from '../utilities/vector';
 import * as Move from './systems/Move';
@@ -7,6 +6,12 @@ import { mapIndexKey } from "./Constants";
 import { doLos } from "./systems/Shadowcast";
 import {testMap} from './mapgen/TestMap';
 import * as MapCreator from './mapgen/MapCreator';
+
+import * as Door from './itemdefs/Door';
+import * as Wall from './itemdefs/Wall';
+import * as Player from './itemdefs/Player';
+import * as Widget from './itemdefs/Widget';
+import * as NukeWidget from './itemdefs/NukeWidget';
 
 export const states = {
     INTRO: 0,
@@ -133,7 +138,7 @@ class GameShell extends BaseGameManager {
                 break;
 
             case states.MAPTEST:
-                Entities.player(-99, -99, this);
+                Player.create(-99, -99, this);
                 MapCreator.initMap(80, 40, this);
 
                 MapCreator.readMap(testMap, new Map(), this);
@@ -156,35 +161,35 @@ class GameShell extends BaseGameManager {
     }
 
     setupScene() {
-        Entities.player(10, 10, this);
+        Player.create(10, 10, this);
 
-        Entities.wall(15, 10, this);
-        Entities.wall(16, 10, this);
-        Entities.door(17, 10, "h", false, this);
-        Entities.wall(18, 10, this);
-        Entities.wall(19, 10, this);
+        Wall.create(15, 10, this);
+        Wall.create(16, 10, this);
+        Door.create(17, 10, "h", false, this);
+        Wall.create(18, 10, this);
+        Wall.create(19, 10, this);
 
-        Entities.wall(15, 15, this);
-        Entities.wall(16, 15, this);
-        Entities.wall(17, 15, this);
-        Entities.wall(18, 15, this);
-        Entities.wall(19, 15, this);
+        Wall.create(15, 15, this);
+        Wall.create(16, 15, this);
+        Wall.create(17, 15, this);
+        Wall.create(18, 15, this);
+        Wall.create(19, 15, this);
 
 
-        Entities.wall(19, 11, this);
-        Entities.wall(19, 12, this);
-        Entities.wall(19, 13, this);
-        Entities.wall(19, 14, this);
+        Wall.create(19, 11, this);
+        Wall.create(19, 12, this);
+        Wall.create(19, 13, this);
+        Wall.create(19, 14, this);
 
-        Entities.wall(15, 11, this);
-        Entities.wall(15, 12, this);
-        Entities.door(15, 13, "v", false, this);
-        Entities.wall(15, 14, this);
+        Wall.create(15, 11, this);
+        Wall.create(15, 12, this);
+        Door.create(15, 13, "v", false, this);
+        Wall.create(15, 14, this);
 
-        Entities.widget(17, 13, this);
-        Entities.widget(3,3,this);
-        Entities.widget(11, 14, this);
-        Entities.nukeWidget(8, 13, this);
+        Widget.create(17, 13, this);
+        Widget.create(3,3,this);
+        Widget.create(11, 14, this);
+        NukeWidget.create(8, 13, this);
     }
 }
 

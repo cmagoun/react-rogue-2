@@ -1,6 +1,6 @@
-import * as Components from '../Components';
+import * as Components from '../itemdefs/Components';
 import * as Vector from '../../utilities/vector';
-import * as Entities from '../../game/Entities';
+import * as Wall from '../../game/itemdefs/Wall';
 
 const spaceKey = (x, y) => `${x},${y}`;
 const spaceVec = (vec) => `${vec.x},${vec.y}`;
@@ -8,7 +8,7 @@ const spaceVec = (vec) => `${vec.x},${vec.y}`;
 export const initMap = (width, height, gm) => {
     for(let x = 0; x < width; x++) {
         for(let y = 0; y < height; y++) {
-            Entities.wall(x, y, gm);
+            Wall.create(x, y, gm);
         }
     }
 }

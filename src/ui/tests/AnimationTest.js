@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import withContext from '../../ecs/withContext';
 import DrawArea from '../DrawArea';
 import * as Vector from '../../utilities/vector';
-import * as Components from '../../game/Components';
+import * as Components from '../../game/itemdefs/Components';
 import * as Move from '../../game/systems/Move';
 
 //the goal here is to test running a larger number of animations at the same time

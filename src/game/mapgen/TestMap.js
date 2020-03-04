@@ -1,5 +1,6 @@
-import * as Entities from '../Entities';
+
 import * as Move from '../systems/Move';
+import * as Door from '../itemdefs/Door';
 
 export const testMap = {
     width: 80,
@@ -7,11 +8,11 @@ export const testMap = {
     legend: [
         {
             key: "|",
-            create: (x, y, gm) => Entities.door(x, y, "v", false, gm),
+            create: (x, y, gm) => Door.create(x, y, "v", false, gm),
         },
         {
             key: "-",
-            create: (x, y, gm) => Entities.door(x, y, "h", false, gm),
+            create: (x, y, gm) => Door.create(x, y, "h", false, gm),
         },
         {
             key: "@",

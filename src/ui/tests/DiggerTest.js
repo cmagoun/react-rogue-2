@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import withContext from '../../ecs/withContext';
 import DrawArea from '../DrawArea';
 import * as MapCreator from '../../game/mapgen/MapCreator';
-import * as Components from '../../game/Components';
+import * as Components from '../../game/itemdefs/Components';
 
 //the goal here is to visualize how the digger
 //is going to behave as it goes about his business

@@ -1,6 +1,17 @@
 import React from 'react';
-import SingleEntityTargeter from "./SingleEntityTargeter"
-import * as Components from '../Components';
+import SingleEntityTargeter from "../../ui/targeters/SingleEntityTargeter";
+import * as Components from './Components';
+import * as Interaction from '../systems/Interaction';
+
+export const create = (x, y, gm) => {
+    return gm.createEntity("nuke")
+        .add(Components.sprite("!", x, y, "white", "red"))
+        .add(Components.pos(x, y, gm))
+        .add(Components.interacts(
+            Interaction.blocksmove,
+            interaction
+        ))
+}
 
 export const interaction = {
     ui: (info, gm) => <SingleEntityTargeter info={info} possibleTargets={gm.taggedAs("widget")} flashColor="pink"/>,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import withContext from '../../ecs/withContext';
-import {tileSize, onSpace, arenaY} from '../Constants';
-import * as Animate from '../systems/Animate';
+import {tileSize, onSpace, arenaY} from '../../game/Constants';
+import * as Animate from '../../game/systems/Animate';
 
 class SingleEntityTargeter extends Component {
     constructor(props) {
