@@ -5,9 +5,16 @@ import * as Entities from '../../game/Entities';
 const spaceKey = (x, y) => `${x},${y}`;
 const spaceVec = (vec) => `${vec.x},${vec.y}`;
 
+export const initMap = (width, height, gm) => {
+    for(let x = 0; x < width; x++) {
+        for(let y = 0; y < height; y++) {
+            Entities.wall(x, y, gm);
+        }
+    }
+}
+
 //this allows us to do set pieces
-//spaces is {walkable: Map(), used: Map()} that shows 
-//a. if we've touched this space, and b. if this space is walkable
+//spaces is Map() that shows if this space is walkable
 export const readMap = (map, spaces, gm) => {
     const creator = new Map();
     map.legend.forEach(item => creator.set(item.key, item));
@@ -15,22 +22,28 @@ export const readMap = (map, spaces, gm) => {
     map.map.forEach((srow, y) => {
         for(let x = 0; x < srow.length; x++) {
             const key = srow.charAt(x);
-            if(key !== "" && key !== " ") {
-                const cell = creator.get(key);
-                cell.create(x, y, gm);
+            if(key !== "" && key !== " " && creator.has(key)) {
+                emptySpace(x, y, gm);
 
-                if(cell.walkable) spaces.walkable.set(spaceKey(x,y), 1);
-                spaces.used.set(spaceKey(x,y), 1);       
+                const cell = creator.get(key);                
+                if(cell.create) cell.create(x, y, gm);
+
+                spaces.set(spaceKey(x,y), 1);     
             }
         }
     });
 }
 
+//components
 export const facing = (value) => {
     return {
         cname: "facing",
         value
     };
+}
+
+export const nokill = () => {
+    return {cname:"nokill"};
 }
 
 const done = () => {
@@ -39,13 +52,24 @@ const done = () => {
     };
 }
 
+//entities
 export const makeDigger = (x, y, fac, index, gm) => {
+    const glyph = (index, gm) => () => {
+        const e = gm.entity(`digger_${index}`);
+        if(e.facing.value === "n") return "^";
+        if(e.facing.value === "s") return "V";
+        if(e.facing.value === "e") return ">";
+        return "<";
+    }
+
     return gm.createEntity(`digger_${index}`)
+        .add(Components.sprite(glyph(index,gm), x, y, "green", "white"))
         .add(Components.pos(x, y, gm))
         .add(facing(fac))
         .add(Components.tag("digger"));
 }
 
+//dig commands
 const dig = (digger, spaces, gm) => {
     //generally, we are going to follow this procedure each iteration:
     //1. digger extends the hallway some distance straight ahead
@@ -62,18 +86,69 @@ const dig = (digger, spaces, gm) => {
 
     switch(dieRoll) {
         case 1:
-
+            turn("r", digger, spaces, gm);
+            return;
+        case 2:
+            turn("l", digger, spaces, gm);
+            return;
+        case 3:
+            digRoom(digger, spaces, gm);
+            return;
     }
 }
 
-export const turn = (rl, digger, spaces, gm) => {
-    const facing = newFacing(digger.facing.value, rl);
-    const myPos = digger.pos.vec;
+export const digMap = (iterations, spaces, gm) => {
+    while(iterations > 0) {
+        const diggers = gm.taggedAs("digger");
 
-    placeWallsOnEitherSide(myPos, facing, spaces, gm);
-    placeWallOnOuterDiagonal(myPos, facing, rl, spaces, gm);
+        diggers.forEach(digger => dig(digger, spaces, gm));
+        diggers.forEach(d => {
+            if(d.done) d.destroy();
+        });
+        
+        iterations--;
+    }
+}
 
-    digger.edit("facing", {value:facing});
+export const digRoom = (digger, spaces, gm) => {
+    let dimx = Vector.getRandomInt(4, 10);
+    let dimy = Vector.getRandomInt(4, 10);
+    let rec = null;
+    let isOverlapping = false;
+    let result = false;
+
+    const pos = digger.pos.vec;
+
+    while(dimx > 4 && dimy > 4 && (!rec || !result)) {
+        let offsetx = Vector.getRandomInt(0, dimx-1);
+        let offsety = Vector.getRandomInt(0, dimy-1);
+    
+        let rec = digger.facing.value === "n" || digger.facing.value === "s"
+            ? roomRectangle(digger.pos.vec, digger.facing.value, dimx, dimy, offsetx)
+            : roomRectangle(digger.pos.vec, digger.facing.value, dimx, dimy, offsety);
+    
+        isOverlapping = false;
+        rec.forEach(r => {
+             if(spaces.has(spaceVec(r)) && 
+                (r.x !== pos.x || r.y !== pos.y)) isOverlapping = true;
+        });
+
+        if(isOverlapping) {
+            //make the room smaller and try again
+            dimx--;
+            dimy--;
+        } else {
+            //create the room
+            rec.forEach(r => {
+                emptySpace(r.x, r.y, gm);
+                spaces.set(spaceVec(r), 1);
+            });
+
+            result = true;
+        }
+    }
+
+    return result;
 }
 
 export const goStraight = (digger, spaces, gm) => {
@@ -82,53 +157,32 @@ export const goStraight = (digger, spaces, gm) => {
     const key = spaceVec(moveTo);
 
     //we have tunneled into an existing tunnel, and we are done
-    if(spaces.walkable.has(key)) {
+    if(spaces.has(key) && !digger.nokill) {
         digger.add(done());
         return;
     }
-        
-    //you are hitting a wall go ahead and break this... let's see what happens
-    if(spaces.used.has(key)) {
-        const onSpace = gm.entitiesIn("ix_pos", key);
 
-        onSpace.forEach(e => {
-            if(e.tag.value === "wall") e.destroy();
-        });
-    }
-
-    placeWallsOnEitherSide(moveTo, facing, spaces, gm);
-    
-    spaces.walkable.set(key, 1); //I think this is right
-    spaces.used.set(key, 1);
+    emptySpace(moveTo.x, moveTo.y, gm);
+         
+    spaces.set(key, 1); 
 
     digger.edit("pos", {vec:moveTo});
     digger.edit("sprite", {draw:moveTo});
     
 }
 
-export const digMap = (iterations, spaces, gm) => {
-    while(iterations > 0) {
-        const diggers = gm.taggedAs("digger");
-        diggers.forEach(digger => dig(digger, spaces, gm));
-        iterations--;
-    }
+export const turn = (rl, digger, spaces, gm) => {
+    const facing = newFacing(digger.facing.value, rl);
+    digger.edit("facing", {value:facing});
 }
 
-const onEitherSide = (vec, facing, spaces) => {
-    const result = [];
-
-    const checkDir = (dir, spaces) => {
-        const vc = Vector.add(vec)(Vector.direction(dir));
-        if(!isUsed(vc, spaces)) result.push(vc);
-    }
-
-    if(facing === "e" || facing === "w") {
-        ["n", "s"].forEach(d => checkDir(d, spaces));
-    } else {
-        ["e", "w"].forEach(d => checkDir(d, spaces));
-    }
-
-    return result;
+//helpers for dig commands
+const emptySpace = (x, y, gm) => {
+    //empty the space
+    const onSpace = gm.entitiesIn("ix_pos", spaceKey(x, y));
+    onSpace.forEach(os => {
+        if(os.destroy) os.destroy();
+    });
 }
 
 const newFacing = (oldFacing, rl) => {
@@ -151,42 +205,47 @@ const newFacing = (oldFacing, rl) => {
     }
 }
 
-const outerDiagonal = (facing, rl) => {
+const roomRectangle = (vec, facing, width, height, offset) => {
+    let rec = [];
+    let startx;
+    let starty;
+    let endx;
+    let endy;
+
     switch(facing) {
         case "n":
-        case "north":
-            return rl === "r" ? {x:-1, y:1} : {x:1, y:1};
-
+            startx = vec.x - offset;
+            endx = startx + width;
+            starty = vec.y - height;
+            endy = vec.y - 1;
+            break;
         case "s":
-        case "south":
-            return rl === "r" ? {x:1, y:-1} : {x:-1, y:-1};
-
-
+            startx = vec.x - offset;
+            endx = startx + width;
+            starty = vec.y + 1;
+            endy = vec.y + height;
+            break;
         case "e":
-        case "east":
-            return rl === "r" ? {x:-1, y:-1} : {x:-1, y:1};
-
+            startx = vec.x + 1;
+            endx = vec.x + width;
+            starty = vec.y - offset;
+            endy = starty + height;
+            break;
         case "w":
-        case "west":
-            return rl === "r" ? {x:1, y:1} : {x:1, y:-1};
+            startx = vec.x - width;
+            endx = vec.x - 1;
+            starty = vec.y - offset;
+            endy = starty + height;
+            break;
     }
+
+    for(let x = startx; x <= endx; x++) {
+        for(let y = starty; y <= endy; y++) {
+            rec.push({x,y});
+        }
+    }
+
+    return rec;
 }
 
-const placeWallsOnEitherSide = (vec, facing, spaces, gm) => {
-    //if nothing is there currently, put walls on either side
-    //of the new position, then move the digger into that space
-    const toPlace = onEitherSide(vec, facing, spaces);
-    toPlace.forEach(p => {
-        Entities.wall(p.x, p.y, gm);
-        spaces.used.set(spaceVec(p), 1);
-    });
-}
-
-const placeWallOnOuterDiagonal = (vec, facing, rl, spaces, gm) => {
-    const od = outerDiagonal(facing, rl);
-    const toPlace = Vector.add(vec)(od);
-    if(!isUsed(toPlace, spaces)) Entities.wall(toPlace.x, toPlace.y, gm);
-}
-
-const isUsed = (vec, spaces) => spaces.used.has(spaceVec(vec));
 

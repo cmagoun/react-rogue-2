@@ -133,8 +133,10 @@ class GameShell extends BaseGameManager {
                 break;
 
             case states.MAPTEST:
-                Entities.player(0, 0, this);
-                MapCreator.readMap(testMap, this);
+                Entities.player(-99, -99, this);
+                MapCreator.initMap(80, 40, this);
+
+                MapCreator.readMap(testMap, new Map(), this);
                 this.updateGameState(states.PLAYFIELD);
                 this.updateGameState(states.TURN_START);
                 break;

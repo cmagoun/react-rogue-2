@@ -4,31 +4,16 @@ import DrawArea from '../DrawArea';
 import * as MapCreator from '../../game/mapgen/MapCreator';
 import * as Components from '../../game/Components';
 
-//the goal here is to test running a larger number of animations at the same time
+//the goal here is to visualize how the digger
+//is going to behave as it goes about his business
 class DiggerTest extends Component {
     constructor(props) {
         super(props);
         this.state = {toggle:true};
         this.keyPress = this.handleKeyPress.bind(this);
         this.ecsUpdated = this.updateScreen.bind(this);  
-         this.spaces = {walkable: new Map(), used: new Map()};
+        this.spaces = new Map();
         this.digger = {};
-    }
-
-    makeDigger = (x, y, fac, index, gm) => {
-        const glyph = (index, gm) => () => {
-            const e = gm.entity(`digger_${index}`);
-            if(e.facing.value === "n") return "^";
-            if(e.facing.value === "s") return "V";
-            if(e.facing.value === "e") return ">";
-            return "<";
-        }
-
-        return gm.createEntity(`digger_${index}`)
-            .add(Components.sprite(glyph(index,gm), x, y, "green", "white"))
-            .add(Components.pos(x, y, gm))
-            .add(MapCreator.facing(fac))
-            .add(Components.tag("digger"));
     }
 
     componentDidMount() {
@@ -36,7 +21,9 @@ class DiggerTest extends Component {
         gm.registerForUpdates("diggertest", this.ecsUpdated);
         window.addEventListener("keyup", this.keyPress);
 
-        this.makeDigger(10, 10, "n", 1, gm);
+        MapCreator.initMap(80, 40, gm);
+        MapCreator.makeDigger(10, 10, "n", 1, gm).add(MapCreator.nokill());
+        this.updateScreen();
     }
 
     componentWillUnmount() {
@@ -74,6 +61,10 @@ class DiggerTest extends Component {
 
             case "ArrowRight":
                 MapCreator.turn("r", digger, this.spaces, gm);
+                break;
+
+            case "r":
+                MapCreator.digRoom(digger, this.spaces, gm);
                 break;
         }
     }
