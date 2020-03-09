@@ -1,6 +1,10 @@
 import {states} from '../GameShell';
 
-export const blocksmove = (e, req, answer) => {
+export const blocksmove = (blockReason) => (e, req, answer) => {
+    return {result:blockReason, destination: req.to, entity:e}
+};
+
+export const interacts = (e, req, answer) => {
     return {result:"interact", destination: req.to, entity:e}
 };
 

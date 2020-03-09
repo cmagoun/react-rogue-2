@@ -65,8 +65,7 @@ class GameShell extends BaseGameManager {
         this.updateGameState(states.WAITING_FOR_INPUT);
     }
 
-
-
+    
     lineOfSight() {
         if(this.needLOSUpdate || this.drawList.length === 0) this.drawList = doLos(this);
         this.needLOSUpdate = false;
@@ -162,7 +161,7 @@ class GameShell extends BaseGameManager {
                 break;
 
             case states.MAPTEST:
-                MapCreator.initMap(80, 40, this);
+                MapCreator.initMap(80, 40, Wall.create, this);
                 MapCreator.readMap(testMap, new Map(), this);
                 
                 this.updateGameState(states.PLAYFIELD);

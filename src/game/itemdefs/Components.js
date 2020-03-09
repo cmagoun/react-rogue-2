@@ -5,13 +5,13 @@ export const blockslos = (gm) => {
     }
 }
 
-export const blocksmove = (onMoveSpace) => {
+//technically this is just interacts(Interaction.blocksmove, null)
+//should we consolidate this?
+export const blocksmove = (reason) => {
     return {
         cname: "blocksmove",
-        onMoveSpace: onMoveSpace 
-            ? onMoveSpace 
-            : (e, req, ans) => {
-                return {result:"wall", destination:undefined, entity:e}
+        onMoveSpace: (e, req, ans) => {
+                return {result: reason || "wall", destination:undefined, entity:e}
             }
     };
 }

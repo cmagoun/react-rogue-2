@@ -3,6 +3,7 @@ import withContext from '../../ecs/withContext';
 import DrawArea from '../DrawArea';
 import * as MapCreator from '../../game/mapgen/MapCreator';
 import * as Components from '../../game/itemdefs/Components';
+import * as Wall from '../../game/itemdefs/Wall';
 
 //the goal here is to visualize how the digger
 //is going to behave as it goes about his business
@@ -21,7 +22,7 @@ class DiggerTest extends Component {
         gm.registerForUpdates("diggertest", this.ecsUpdated);
         window.addEventListener("keyup", this.keyPress);
 
-        MapCreator.initMap(80, 40, gm);
+        MapCreator.initMap(80, 40, Wall.create, gm);
         MapCreator.makeDigger(10, 10, "n", 1, gm).add(MapCreator.nokill());
         this.updateScreen();
     }
@@ -36,7 +37,7 @@ class DiggerTest extends Component {
         const toDraw = this.props.gm.toDraw();
 
          return <div>
-            <DrawArea toDraw={toDraw} showAlt={this.props.gm.showAlt}/>
+            <DrawArea toDraw={toDraw} showAlt={this.props.gm.showAlt} cameraOrigin={this.props.gm.cameraOrigin}/>
         </div>
     }
 

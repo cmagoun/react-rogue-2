@@ -12,7 +12,7 @@ export const create = (x, y, vh, open, gm) => {
         .add(Components.canopen(open))
         .add(Components.persistvision(false))
         .add(Components.interacts(
-            Interaction.blocksmove,
+            Interaction.interacts,
             interaction
         ));
 

@@ -5,10 +5,10 @@ import * as Wall from '../../game/itemdefs/Wall';
 const spaceKey = (x, y) => `${x},${y}`;
 const spaceVec = (vec) => `${vec.x},${vec.y}`;
 
-export const initMap = (width, height, gm) => {
+export const initMap = (width, height, initfn, gm) => {
     for(let x = 0; x < width; x++) {
         for(let y = 0; y < height; y++) {
-            Wall.create(x, y, gm);
+            initfn(x, y, gm);
         }
     }
 }

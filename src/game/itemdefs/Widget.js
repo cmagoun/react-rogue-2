@@ -7,7 +7,7 @@ export const create = (x, y, gm) => {
         .add(Components.pos(x,y, gm))
         .add(Components.tag("widget"))
         .add(Components.interacts(
-            Interaction.blocksmove,
+            Interaction.interacts,
             interaction
         ));
 }
