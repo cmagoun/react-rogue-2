@@ -63,7 +63,6 @@ export const sprite = (glyph, x, y, bcolor, fcolor, z, border) => {
         fcolor: fcolor || "white", 
         border: border || "",
         z: z || 0,
-        //show: show === undefined ? true : show,
     };
 }
 

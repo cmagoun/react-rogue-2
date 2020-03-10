@@ -32,13 +32,15 @@ export const glyph = (key, gm) => () => {
 
 export const interaction = {
     fire: (props, gm) => {
-        if(props.entity.canopen.open) {
-            Move.doMove(props.actor, props.pos, gm);
+        const {actor, entity, pos} = props;
+
+        if(entity.canopen.open) {
+            Move.doMove(actor, pos, gm);
             return;
         }
 
-        props.entity.edit("canopen", {open:true});
-        props.entity.remove("blockslos");
+        entity.edit("canopen", {open:true});
+        entity.remove("blockslos");
         gm.addLogMessage("You open the door.");
     },
     endsTurn: true

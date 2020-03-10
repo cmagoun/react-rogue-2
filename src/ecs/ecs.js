@@ -286,12 +286,12 @@ class Builder {
     }
 
     add(component) {
-        this.cm.__addComponent(this.id, component);
+        this.cm.addComponent(this.id, component);
         return this;
     }
 
     remove(cname) {
-        this.cm.__removeComponentFrom(this.id, cname);
+        this.cm.removeComponentFrom(this.id, cname);
         return this;
     }
 
